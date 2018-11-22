@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "express": ">=4.16.4",
+    "request": ">=2.68.0",
     "request-promise": ">=4.2.2",
     "restify": ">=7.2.3"
   },
