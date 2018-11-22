@@ -19,8 +19,6 @@
 
 var fs = require('fs');
 
-var config = require('amoeba').config;
-
 function maybeReplaceWithContentsOfFile(obj, field)
 {
   var potentialFile = obj[field];
@@ -34,9 +32,9 @@ module.exports = (function() {
 
 
   // The service name to publish on discovery
-  env.serviceName = config.fromEnvironment('SERVICE_NAME',"health-check");
+  env.serviceName = process.env.SERVICE_NAME || "health-check";
 
-  env.services = JSON.parse(config.fromEnvironment('MONITORED_URLS'));
+  env.services = JSON.parse(process.env.MONITORED_URLS);
 
   return env;
 })();
