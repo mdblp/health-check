@@ -4,7 +4,8 @@
   "description": "simple REST service to check the health of all our services and report it back",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 10000",
+    "pretest": "npm install --dev",
+    "test": "mocha --timeout 10000 --recursive --reporter mocha-junit-reporter --reporter-options testCaseSwitchClassnameAndName=true",
     "start": "node index.js"
   },
   "author": "",
