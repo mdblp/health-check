@@ -1,25 +1,35 @@
-/*
- 
-*/
-const bunyan = require("bunyan");
-var config = require("./env.js");
+/**
+ * Entry point for the health-check service
+ */
 'use strict';
-
+const bunyan = require("bunyan");
 const HealthCheckService = require('./service.js');
+var config = require("./env.js");
 
+// Create logger used by the service (based on configuration)
 var logger = bunyan.createLogger({
-    name: 'health-check',
+    name: config.serviceName,
     streams: [
         {
-          level: 'info',
+          level: config.logLevel,
           stream: process.stdout
         },
         {
-          level: 'info',
-          path: './health-check.log'
+          level: config.logLevel,
+          path: config.logFile
         }
       ]
 });
-var service = new HealthCheckService(config.services);
+
+//Currently the list of services is provided by configuration. Ideally this should be obtained from hakken
+if(config.monitoredServices == null) {
+  logger.error("Cannot start %s service, the object environment variable 'MONITORED_URLS' is malformed. "
+    + "It should be in the form of %s",
+    config.serviceName,
+    "[{\"name\": \"svc1\", \"url\":\"https://.../status\"},{\"name\": \"svc2\", \"url\":\"https://.../status\"}]"
+    )
+    process.exit(1);
+}
+var service = new HealthCheckService(config.monitoredServices);
 service.logger=logger;
-service.start(8080);
+service.start(config.servicePort);

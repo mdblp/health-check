@@ -1,40 +1,42 @@
-// Loads the environment and makes it accessible,
-// and also has sensible defaults
+/**
+ * Set configuration variables for the health-check service
+ * Try to retrieve values for environment variables as much as possible, otherwise use defaults.
+ */
 
-// == BSD2 LICENSE ==
-// Copyright (c) 2014, Tidepool Project
-//
-// This program is free software; you can redistribute it and/or modify it under
-// the terms of the associated License, which is identical to the BSD 2-Clause
-// License as published by the Open Source Initiative at opensource.org.
-//
-// This program is distributed in the hope that it will be useful, but WITHOUT
-// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the License for more details.
-//
-// You should have received a copy of the License along with this program; if
-// not, you can obtain one from Tidepool Project at tidepool.org.
-// == BSD2 LICENSE ==
 'use strict';
+const bunyan = require("bunyan");
 
-var fs = require('fs');
-
-function maybeReplaceWithContentsOfFile(obj, field)
-{
-  var potentialFile = obj[field];
-  if (potentialFile != null && fs.existsSync(potentialFile)) {
-    obj[field] = fs.readFileSync(potentialFile).toString();
-  }
-}
+var logger = bunyan.createLogger({
+  name: "health-check-config",
+  streams: [
+      {
+        level: "error",
+        stream: process.stdout
+      }
+    ]
+});
 
 module.exports = (function() {
   var env = {};
-
-
-  // The service name to publish on discovery
+  //port on which to expose the service
+  env.servicePort = process.env.SERVICE_PORT || 8080
+  // The service
   env.serviceName = process.env.SERVICE_NAME || "health-check";
+  // list of urls to monitor
+  // exemple: [{"name": "svc1", "url":"https://.../status"},{"name": "svc2", "url":"https://.../status"}]
+  var monitored_urls = process.env.MONITORED_URLS;
+  if(monitored_urls) {
+    try {
+      env.monitoredServices = JSON.parse(monitored_urls);
+    } catch(err) {
+      logger.error("Error while parsing the list of monitored services: " + err);
+    }
+  }
+  
 
-  env.services = JSON.parse(process.env.MONITORED_URLS);
+  //Log config
+  env.loglevel = process.env.LOG_LEVEL || 'info';
+  env.logFile = process.env.LOG_FILE || './health-check.log'
 
   return env;
 })();
