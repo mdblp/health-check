@@ -1,4 +1,7 @@
-
+/**
+ * Service.js
+ * Implementation of the health-check service
+ */
 'use strict';
 
 var restify = require('restify');
@@ -7,6 +10,14 @@ const bunyan = require("bunyan");
 
 class HealthCheckService{
     constructor(services) {
+        //let's check the list list of services if OK:
+        if(services && Array.isArray(services)) {
+            services.forEach((service) => {
+                if (typeof service.name != 'string' || typeof service.url != 'string'){
+                    throw "the list of monitored services is malformed";
+                }
+            });
+        }
         this.services=services;    
         //default logger
         this.logger = bunyan.createLogger({
