@@ -1,17 +1,22 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:10.13.0-alpine'           
-        }
-    } 
+    agent any
     stages {
         stage('Build') { 
+            agent {
+                docker {
+                    image 'node:10.13.0-alpine'           
+                }
+            }
             steps { 
                 sh 'npm install'
-                sh 'docker build --tag health-check:latest .'
             }
         }
         stage('Acceptance tests'){
+            agent {
+                    docker {
+                    image 'node:10.13.0-alpine'           
+                }
+            }
             steps {
                 sh 'npm test'
             }
@@ -37,13 +42,14 @@ pipeline {
                 }
                 
                 echo "let's package as ${version}."
-                sh "docker tag health-check:latest docker.ci.diabeloop.eu/health-check:${version}"
+                //sh "docker tag health-check:latest docker.ci.diabeloop.eu/health-check:${version}"
                 //then upload
                 withCredentials([usernamePassword(credentialsId: 'nexus-jenkins', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PWD')]) {
 
                     sh '''
-                        echo ${NEXUS_PWD} | docker login -u ${NEXUS_USER} docker.ci.diabeloop.eu
-                        docker push docker.ci.diabeloop.eu/health-check:${version}
+                        docker build -t docker.ci.diabeloop.eu/health-check:${version} -t docker.ci.diabeloop.eu/health-check:latest
+                        echo "${NEXUS_PWD}" | docker login -u ${NEXUS_USER} --password-stdin docker.ci.diabeloop.eu
+                        docker push docker.ci.diabeloop.eu/health-check:latest
                     '''
                 }
             }
