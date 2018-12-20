@@ -47,4 +47,4 @@ $ npm test
 
 ### Link to Jira issues
 add in commit log: `<ignored text> <ISSUE_KEY> <ignored text> #<COMMAND> <optional COMMAND_ARGUMENTS>`
-for example: 
+for example: `YLP_9 #close #comment this corrects the issue`
