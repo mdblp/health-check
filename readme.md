@@ -45,3 +45,6 @@ To run the unit tests, use:
 $ npm test
 ```
 
+### Link to Jira issues
+add in commit log: `<ignored text> <ISSUE_KEY> <ignored text> #<COMMAND> <optional COMMAND_ARGUMENTS>`
+
