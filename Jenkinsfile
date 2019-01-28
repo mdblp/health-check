@@ -42,6 +42,8 @@ pipeline {
                 }
                 
                 echo "let's package as ${version}."
+                sh "bash package.sh ${version}"
+                archiveArtifacts artifacts: 'health-check*.tar.gz'
                 //sh "docker tag health-check:latest docker.ci.diabeloop.eu/health-check:${version}"
                 //then upload
                 withCredentials([usernamePassword(credentialsId: 'nexus-jenkins', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PWD')]) {
