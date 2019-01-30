@@ -1,22 +1,17 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:10.13.0-alpine'
+        }
+    }
     stages {
-        stage('Build') { 
-            agent {
-                docker {
-                    image 'node:10.13.0-alpine'           
-                }
-            }
+        stage('Build and package') { 
             steps { 
                 sh 'npm install'
+                sh 'sh ./qa/distrib.sh'
             }
         }
         stage('Acceptance tests'){
-            agent {
-                    docker {
-                    image 'node:10.13.0-alpine'           
-                }
-            }
             steps {
                 sh 'npm test'
             }
@@ -42,16 +37,17 @@ pipeline {
                 }
                 
                 echo "let's package as ${version}."
-                sh "bash package.sh ${version}"
+                sh "sh package.sh ${version}"
                 archiveArtifacts artifacts: 'health-check*.tar.gz'
                 //sh "docker tag health-check:latest docker.ci.diabeloop.eu/health-check:${version}"
                 //then upload
                 withCredentials([usernamePassword(credentialsId: 'nexus-jenkins', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PWD')]) {
 
                     sh '''
-                        docker build -t docker.ci.diabeloop.eu/health-check:${version} -t docker.ci.diabeloop.eu/health-check:latest
+                        docker build -t docker.ci.diabeloop.eu/health-check:${version} -t docker.ci.diabeloop.eu/health-check:latest .
                         echo "${NEXUS_PWD}" | docker login -u ${NEXUS_USER} --password-stdin docker.ci.diabeloop.eu
                         docker push docker.ci.diabeloop.eu/health-check:latest
+                        docker push docker.ci.diabeloop.eu/health-check:${version}
                     '''
                 }
             }
