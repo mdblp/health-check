@@ -1,17 +1,24 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:10.13.0-alpine'
-        }
-    }
+    agent any
     stages {
         stage('Build and package') { 
+             agent {
+                docker {
+                    image 'node:10.13.0-alpine'
+                }
+            }
             steps { 
                 sh 'npm install'
                 sh 'sh ./qa/distrib.sh'
+                stash name: "distrib", includes: "dist/**"
             }
         }
         stage('Acceptance tests'){
+            agent {
+                docker {
+                    image 'node:10.13.0-alpine'
+                }
+            }
             steps {
                 sh 'npm test'
             }
@@ -37,12 +44,13 @@ pipeline {
                 }
                 
                 echo "let's package as ${version}."
-                sh "sh package.sh ${version}"
+                unstash "distrib"
+                sh "sh ./qa/package.sh ${version}"
                 archiveArtifacts artifacts: 'health-check*.tar.gz'
-                //sh "docker tag health-check:latest docker.ci.diabeloop.eu/health-check:${version}"
-                //then upload
+                //Copy to S3
+                s3Upload(file:"health-check-dblp.${version}.tar.gz", bucket:'com.diabeloop.yourloops.ci', path:"deploy/health-check/")
+                //And then to nexus
                 withCredentials([usernamePassword(credentialsId: 'nexus-jenkins', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PWD')]) {
-
                     sh '''
                         docker build -t docker.ci.diabeloop.eu/health-check:${version} -t docker.ci.diabeloop.eu/health-check:latest .
                         echo "${NEXUS_PWD}" | docker login -u ${NEXUS_USER} --password-stdin docker.ci.diabeloop.eu
@@ -53,10 +61,4 @@ pipeline {
             }
         }
     }
-    /*
-    post {
-        failure {
-            
-        }
-    }*/
 }
