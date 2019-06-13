@@ -7,5 +7,5 @@ if [ ! -d "$root_dir/dist" ]; then
 fi
 
 # rename dist to make sure it is named after the module name and release number (it's important for the deployment process)
-mv $root_dir/dist $root_dir/health-check-dblp.$1
-tar -czf $root_dir/health-check-dblp.$1.tar.gz -C $root_dir health-check-dblp.$1/*
+mv $root_dir/dist $root_dir/health-check-$1
+tar -czf $root_dir/health-check-$1.tar.gz -C $root_dir health-check-$1/*
