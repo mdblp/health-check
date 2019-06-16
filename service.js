@@ -117,7 +117,7 @@ class HealthCheckService {
      */
     start(port, callback = null) {
         this.logger.debug("Starting health-check service");
-        this.logger.debug("services array: " + this.services);
+        this.logger.debug("services array: " + JSON.stringify(this.services));
         //create server
         this.server = restify.createServer()
         //define routes

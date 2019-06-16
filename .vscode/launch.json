@@ -11,6 +11,7 @@
             "program": "${workspaceFolder}\\index.js",
             "env": {
                 "SERVICE_PORT":"9190",
+                "LOG_LEVEL": "debug",
                 "MONITORED_URLS":"[{\"name\": \"shoreline\", \"url\":\"http://localhost:9107/status\"},{\"name\": \"gatekeeper\", \"url\":\"http://localhost:9123/status\"},{\"name\": \"hydrophone\", \"url\":\"http://localhost:9157/status\"}, {\"name\": \"platform-data\", \"url\":\"http://localhost:9220/status\"}]"
             }
         },
