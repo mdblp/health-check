@@ -1,6 +1,6 @@
 {
   "name": "health-checks",
-  "version": "0.1.6",
+  "version": "1.0.0",
   "description": "simple REST service to check the health of all our services and report it back",
   "main": "index.js",
   "scripts": {
