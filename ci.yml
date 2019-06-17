@@ -1,0 +1,7 @@
+module: health-check
+type: nodejs
+runTests: false
+testCommand: npm test
+docker: true
+publishNpm: false
+publishS3: true
