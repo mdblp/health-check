@@ -13,8 +13,7 @@ pipeline {
             steps { 
                 sh 'npm install'
                 sh 'sh ./qa/distrib.sh'
-                sh 'sh ./qa/package.sh "${GIT_COMMIT}"'
-                stash name: "package", includes: "health-check-${GIT_COMMIT}.tar.gz"
+                stash name: "distrib", includes: "**"
             }
         }
         stage('Acceptance tests'){
@@ -31,6 +30,13 @@ pipeline {
                     junit 'test-results.xml'
                 }
             }   
+        }
+        stage('Package') {
+            steps {
+                unstash "distrib"
+                pack()
+                stash name: "package", includes: "health-check-${GIT_COMMIT}.tar.gz"
+            }
         }
         stage('Publish') {
             when { branch "master" }
