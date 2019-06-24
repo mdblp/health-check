@@ -7,7 +7,7 @@ pipeline {
         stage('Build and package') { 
              agent {
                 docker {
-                    image 'node:10.13.0-alpine'
+                    image 'node:10.15-alpine'
                 }
             }
             steps { 
