@@ -40,11 +40,11 @@ class HealthCheckService {
 
         return new Promise((resolve, reject) => {
             var retVal = { 'service': service.name };
-
             // prepare request:
             var options = {
                 method: 'GET',
                 uri: service.url,
+                timeout: service.pingTimeout,
                 transform: function (body, response, resolveWithFullResponse) {
                     return { 'statusCode': response.statusCode, 'data': body };
                 }

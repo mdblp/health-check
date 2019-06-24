@@ -9,9 +9,9 @@ chai.use(chaiHttp);
 describe('Global health check service', () => {
     
     var testServices = [
-        {"name": "shoreline", "url":"http://my.services.com/auth/status"},
-        {"name": "gatekeeper", "url":"http://my.services.com/access/status"},
-        {"name": "tide-whisperer", "url":"http://my.services.com/data/status"}
+        {name: "shoreline", url:"http://my.services.com/auth/status", pingTimeout: 5000},
+        {name: "gatekeeper", url:"http://my.services.com/access/status", pingTimeout: 5000},
+        {name: "tide-whisperer", url:"http://my.services.com/data/status", pingTimeout: 5000}
     ];
     var svc = new Service(testServices);
     svc.logger.level('warn');
