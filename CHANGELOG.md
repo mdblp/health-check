@@ -4,6 +4,10 @@ Health-Check is a simple service which allows you to monitor several web service
 The service exposes this agregated status on route /status
 This end point is typically what would be provided to a load balancer to check the health of the entire stack.
 
+## [1.0.1] - 2019-07-02
+### Changed
+- Add a timeout to the heath check requests so a service is reported Not OK if it takes more than x seconds to respond.
+
 ## [1.0.0] - 2019-06-13
 ### Added
 - Change the output of the service: it now returns the full list of services even when one is down.
