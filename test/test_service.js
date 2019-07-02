@@ -9,9 +9,9 @@ chai.use(chaiHttp);
 describe('Global health check service', () => {
     
     var testServices = [
-        {"name": "shoreline", "url":"http://my.services.com/auth/status"},
-        {"name": "gatekeeper", "url":"http://my.services.com/access/status"},
-        {"name": "tide-whisperer", "url":"http://my.services.com/data/status"}
+        {name: "shoreline", url:"http://my.services.com/auth/status", pingTimeout: 5000},
+        {name: "gatekeeper", url:"http://my.services.com/access/status", pingTimeout: 5000},
+        {name: "tide-whisperer", url:"http://my.services.com/data/status", pingTimeout: 5000}
     ];
     var svc = new Service(testServices);
     svc.logger.level('warn');
@@ -46,12 +46,12 @@ describe('Global health check service', () => {
             statusResults[2].details.should.eql("OK");
         });
     });
-    describe('When one service does not respond', () => {
+    describe('When one service is down', () => {
         let statusResults = [];
         before(() => {
             //redefine mock urls to make one of them to fail:
             nock.cleanAll();
-            services.get('/auth/status').reply(500, "cannot reach server")
+            services.get('/auth/status').reply(500, "service is down")
                     .get('/access/status').reply(200,"OK")
                     .get('/data/status').reply(200,"OK");
         });
@@ -67,7 +67,31 @@ describe('Global health check service', () => {
         it('should return an error for shoreline', () => {           
             let authStatus = statusResults.filter(status => status.service == "shoreline");
             authStatus[0].status.should.eql("NOK");
-            authStatus[0].error.should.eql("500 - \"cannot reach server\"");
+            authStatus[0].error.should.eql("500 - \"service is down\"");
+        })
+    });
+    describe('When one service does not respond in a timely manner (timeout)', () => {
+        let statusResults = [];
+        before(() => {
+            //redefine mock urls to make one of them to fail:
+            nock.cleanAll();
+            services.get('/auth/status').reply(200, "OK")
+                    .get('/access/status').reply(200,"OK")
+                    .get('/data/status').delay(6000).reply(200,"mongo ping failed");
+        });
+        it('the service should return an http error 503 and an array of 3 items', (done) => {
+            chai.request(svc.server).get('/status').end((err,res) => {
+                res.should.have.status(503);
+                statusResults = res.body;
+                res.body.should.be.a('array');
+                res.body.length.should.eql(3);
+                done();
+            });
+        });
+        it('should return an error for tide-whisperer', () => {           
+            let authStatus = statusResults.filter(status => status.service == "tide-whisperer");
+            authStatus[0].status.should.eql("NOK");
+            //authStatus[0].error.should.eql("500 - \"cannot reach server\"");
         })
     });
     describe('Body content should be correctly parsed', () => {
