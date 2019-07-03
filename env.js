@@ -22,7 +22,7 @@ module.exports = (function() {
   env.servicePort = process.env.SERVICE_PORT || 8080;
   // The service
   env.serviceName = process.env.SERVICE_NAME || "health-check";
-  env.pingTimeout = JSON.parse(process.env.PING_TIMEOUT) || 5000;
+  env.pingTimeout = JSON.parse(process.env.PING_TIMEOUT || 5000);
   // list of urls to monitor
   // exemple: [{"name": "svc1", "url":"https://.../status"},{"name": "svc2", "url":"https://.../status"}]
   var monitored_urls = process.env.MONITORED_URLS;
