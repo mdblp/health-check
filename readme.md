@@ -30,18 +30,6 @@ $ npm install
 ```
 
 ## Running locally
-TODO: how to configure
-
-```bash
-$ npm start
-```
-
-You can test the service locally: 
-```
-$ curl http://localhost:8080/status
-```
-The service should return either an http status code 200, in case of success, or 503 when (at least) one of the services does not respond.  
-
 ### Configuration
 To start properly the service expect a few environment variables to be set:
 * MONITORED_URLS: the list of urls to ping to monitor services. These urls must be provided as a JSON array.  
@@ -66,6 +54,17 @@ To start properly the service expect a few environment variables to be set:
 * SERVICE_PORT: the port on which the service should listen. Defaults to 8080.
 * SERVICE_NAME: the name of the service, used in the logs. Default to "health-check".  
 * PING_TIMEOUT: Global timeout value, in milliseconds. Defaults to 5000.
+
+### Execution
+```bash
+$ npm start
+```
+
+You can test the service locally: 
+```
+$ curl http://localhost:8080/status
+```
+The service should return either an http status code 200, in case of success, or 503 when (at least) one of the services does not respond.  
 
 ## Contribute
 Start by clonning the repo and install the dependencies as explained above. Then you are ready to change the code and test!  
