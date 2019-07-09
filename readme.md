@@ -1,8 +1,16 @@
 # Health Check
 ## Service description
 Health-Check is a simple service which allows you to monitor several web services and provide an agregated status.  
+
+### How it works
+Each time the service is contacted it will ping (http GET) each service endpoints provided in the configuration and build an agregated view. 
+If all services respond with a status 200 the health check service will return 200 as well. 
+If (at least) one of the monitored services responds with a code different than 2XX or does not respond within the expected delay (timeout) it will return 503.   
+The timeout can be provided globaly and for each service.  
+
 The service exposes this agregated status on route `/status`  
 This end point is typically what would be provided to a load balancer to check the health of the entire stack.
+
 
 ## Install
 Requirements:
@@ -22,8 +30,32 @@ $ npm install
 ```
 
 ## Running locally
-TODO: how to configure
+### Configuration
+To start properly the service expect a few environment variables to be set:
+* MONITORED_URLS: the list of urls to ping to monitor services. These urls must be provided as a JSON array.  
+  Exemple: 
+  ```
+    export MONITORED_URLS="[
+        {\"name\": \"blip\", \"url\":\"http://localhost:3000\"},
+        {\"name\": \"gatekeeper\", \"url\":\"http://localhost:9123/status\"},
+        {\"name\": \"hakken\", \"url\":\"http://localhost:8000/status\"},
+        {\"name\": \"highwater\", \"url\":\"http://localhost:9191/status\"}
+    ]"
+  ```
+  You can add an optionnal timeout to each of the services (in case you need different timeout set for your monitored services):  
+  ```
+    export MONITORED_URLS="[
+        {\"name\": \"blip\", \"url\":\"http://localhost:3000\"},
+        {\"name\": \"gatekeeper\", \"url\":\"http://localhost:9123/status\",  \"pingTimeout\": 3000},
+        {\"name\": \"hakken\", \"url\":\"http://localhost:8000/status\"},
+        {\"name\": \"highwater\", \"url\":\"http://localhost:9191/status\,  \"pingTimeout\": 4000"}
+    ]"
+  ```
+* SERVICE_PORT: the port on which the service should listen. Defaults to 8080.
+* SERVICE_NAME: the name of the service, used in the logs. Default to "health-check".  
+* PING_TIMEOUT: Global timeout value, in milliseconds. Defaults to 5000.
 
+### Execution
 ```bash
 $ npm start
 ```
@@ -32,8 +64,7 @@ You can test the service locally:
 ```
 $ curl http://localhost:8080/status
 ```
-The service should return either an http status code 200, in case of success, or 503 when one the services does not respond.  
-
+The service should return either an http status code 200, in case of success, or 503 when (at least) one of the services does not respond.  
 
 ## Contribute
 Start by clonning the repo and install the dependencies as explained above. Then you are ready to change the code and test!  
