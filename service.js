@@ -9,7 +9,7 @@ var request = require('request-promise');
 const bunyan = require("bunyan");
 
 class HealthCheckService {
-    constructor(services) {
+    constructor(ylpVersion, services) {
         //let's check the list list of services if OK:
         if (services && Array.isArray(services)) {
             services.forEach((service) => {
@@ -19,6 +19,7 @@ class HealthCheckService {
             });
         }
         this.services = services;
+        this.ylpVersion = ylpVersion;
         //default logger
         this.logger = bunyan.createLogger({
             name: 'health-check-default',
@@ -83,6 +84,11 @@ class HealthCheckService {
     checkServices(req, res) {
         this.logger.info("Checking services health");
         let globalResult = [];
+        let ylp = { 'service': 'yourloops', 'version': this.ylpVersion };
+        
+        // By default, we consider everything is going fine
+        let responseStatus = 200;
+
         let isOK = true;
         let nbOfServices = this.services.length;
         let totalOfCheckedServices = 0;
@@ -97,14 +103,19 @@ class HealthCheckService {
                 if (totalOfCheckedServices == nbOfServices) {
                     if (isOK) {
                         this.logger.info("all services are up and running!");
-                        this.logger.debug(globalResult);
-                        res.status(200);
-                        res.send(globalResult);
                     } else {
                         this.logger.info("at least one service is down");
-                        res.status(503);
-                        res.send(globalResult);
+                        // at least one service down and we return 503
+                        responseStatus = 503;
                     }
+                    // Overall status of YLP depends on all services status
+                    ylp['status'] = responseStatus;
+                    // Push YLP service information on first position
+                    globalResult.unshift(ylp);
+                    this.logger.debug(globalResult);
+                    // Respond
+                    res.status(responseStatus);
+                    res.send(globalResult);
                 }
             });
         }

@@ -1,14 +1,14 @@
 # Health Check
 ## Service description
-Health-Check is a simple service which allows you to monitor several web services and provide an agregated status.  
+Health-Check is a simple service which allows you to monitor several web services and provide an aggregated status.  
 
 ### How it works
-Each time the service is contacted it will ping (http GET) each service endpoints provided in the configuration and build an agregated view. 
+Each time the service is contacted it will ping (http GET) each service endpoints provided in the configuration and build an aggregated view. 
 If all services respond with a status 200 the health check service will return 200 as well. 
 If (at least) one of the monitored services responds with a code different than 2XX or does not respond within the expected delay (timeout) it will return 503.   
 The timeout can be provided globaly and for each service.  
 
-The service exposes this agregated status on route `/status`  
+The service exposes this aggregated status on route `/status`  
 This end point is typically what would be provided to a load balancer to check the health of the entire stack.
 
 

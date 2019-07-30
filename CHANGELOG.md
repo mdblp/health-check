@@ -1,8 +1,13 @@
-# Yourloops Health Check agregator service
+# Yourloops Health Check aggregator service
 
-Health-Check is a simple service which allows you to monitor several web services and provide an agregated status.
-The service exposes this agregated status on route /status
+Health-Check is a simple service which allows you to monitor several web services and provide an aggregated status.
+The service exposes this aggregated status on route /status
 This end point is typically what would be provided to a load balancer to check the health of the entire stack.
+
+## [Unreleased]
+
+### Added
+- PT-515 Add capacity to display YourLoops version if passed as an environment variable YLP_VERSION
 
 ## [1.0.1] - 2019-07-02
 ### Changed
@@ -24,4 +29,4 @@ This end point is typically what would be provided to a load balancer to check t
 ## [0.1.1] - 2018-12-18
 ### Features
 - Initiate a new project for yourloops.  
-    For now keep it simple: contact each webservices (defined by configuration), get the result and report an agregated status and view.
+    For now keep it simple: contact each webservices (defined by configuration), get the result and report an aggregated status and view.
