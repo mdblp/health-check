@@ -34,6 +34,7 @@ $ npm install
 ## Running locally
 ### Configuration
 To start properly the service expect a few environment variables to be set:
+* YLP_VERSION: the version of YourLoops the health-check is running on
 * MONITORED_URLS: the list of urls to ping to monitor services. These urls must be provided as a JSON array.  
   Exemple: 
   ```
@@ -72,6 +73,12 @@ The service should return either an http status code 200, in case of success, or
 Start by clonning the repo and install the dependencies as explained above. Then you are ready to change the code and test!  
 
 ### Running the tests
+In order to run the unit tests, you need to have `Mocha` JS test framework installed in your environment. Run the following:
+```bash
+$ npm install -g mocha mocha-junit-reporter
+```
+For more information on Mocha, refer to their [website](https://mochajs.org/).
+
 To run the unit tests, use:
 
 ```bash
