@@ -8,9 +8,19 @@ var restify = require('restify');
 var request = require('request-promise');
 const bunyan = require("bunyan");
 
+const responseCode = {
+    success: 200,
+    failure: 503
+}
+
+const responseStatus = {
+    success: "OK",
+    failure : "NOK"
+};
+
 class HealthCheckService {
     constructor(services, ylpVersion) {
-        //let's check the list list of services if OK:
+        //let's check the list of services is OK:
         if (services && Array.isArray(services)) {
             services.forEach((service) => {
                 if (typeof service.name != 'string' || typeof service.url != 'string') {
@@ -54,9 +64,9 @@ class HealthCheckService {
             request(options)
                 .then((res) => {
                     if (res.statusCode == 200) {
-                        retVal['status'] = "OK";
+                        retVal['status'] = responseStatus.success;
                     } else {
-                        retVal['status'] = "NOK";
+                        retVal['status'] = responseStatus.failure;
                     }
                     let details = "";
                     try {
@@ -68,7 +78,7 @@ class HealthCheckService {
                     resolve(retVal);
                 })
                 .catch((err) => {
-                    retVal['status'] = "NOK";
+                    retVal['status'] = responseStatus.failure;
                     retVal['error'] = err.message;
                     reject(retVal);
                 });
@@ -87,7 +97,7 @@ class HealthCheckService {
         let ylp = { 'service': 'yourloops', 'version': this.ylpVersion };
         
         // By default, we consider everything is going fine
-        let responseStatus = 200;
+        let resCode = responseCode.success;
 
         let isOK = true;
         let nbOfServices = this.services.length;
@@ -105,16 +115,16 @@ class HealthCheckService {
                         this.logger.info("all services are up and running!");
                     } else {
                         this.logger.info("at least one service is down");
-                        // at least one service down and we return 503
-                        responseStatus = 503;
+                        // at least one service down and we return failure
+                        resCode = responseCode.failure;
                     }
                     // Overall status of YLP depends on all services status
-                    ylp['status'] = responseStatus;
+                    ylp['status'] = (resCode == responseCode.success)? responseStatus.success : responseStatus.failure;
                     // Push YLP service information on first position
                     globalResult.unshift(ylp);
                     this.logger.debug(globalResult);
                     // Respond
-                    res.status(responseStatus);
+                    res.status(resCode);
                     res.send(globalResult);
                 }
             });
@@ -156,3 +166,5 @@ class HealthCheckService {
 }
 
 module.exports = HealthCheckService;
+module.exports.responseStatus = responseStatus;
+module.exports.responseCode = responseCode;
