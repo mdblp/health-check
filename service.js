@@ -9,7 +9,7 @@ var request = require('request-promise');
 const bunyan = require("bunyan");
 
 class HealthCheckService {
-    constructor(ylpVersion, services) {
+    constructor(services, ylpVersion) {
         //let's check the list list of services if OK:
         if (services && Array.isArray(services)) {
             services.forEach((service) => {
