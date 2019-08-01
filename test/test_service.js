@@ -18,9 +18,10 @@ describe('Global health check service', () => {
     svc.logger.level('warn');
     var services = nock('http://my.services.com');
     before((done) => {
-        //prepare services mocking
+        // prepare services mocking
+        // "access" service is returning malformed JSON so let's ensure the service is able to work with that
         services.get('/auth/status').reply(200, "OK")
-                .get('/access/status').reply(200, "OK")
+                .get('/access/status').reply(200, "\"OK\"")
                 .get('/data/status').reply(200, "OK");
         svc.start(8080,done);
     });
@@ -117,10 +118,11 @@ describe('Global health check service', () => {
         let statusResults = [];
         const tidewhispererStatus = {status: "OK", version: "1.2.3"};
         before(() => {
-            //redefine mock urls to make one of them to fail:
+            // redefine mock urls to make one of them to fail
+            // "access" service is returning malformed JSON so let's ensure the service is able to work with that
             nock.cleanAll();
             services.get('/auth/status').reply(200, "")
-                    .get('/access/status').reply(200, "OK")
+                    .get('/access/status').reply(200, "\"OK\"")
                     .get('/data/status').reply(200, JSON.stringify(tidewhispererStatus));
         });
         it('the service should return an http status success and an array of 4 items, including "yourloops" item', (done) => {
