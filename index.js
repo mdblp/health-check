@@ -30,6 +30,6 @@ if(config.monitoredServices == null) {
     )
     process.exit(1);
 }
-var service = new HealthCheckService(config.monitoredServices);
+var service = new HealthCheckService(config.monitoredServices, config.ylpVersion);
 service.logger=logger;
 service.start(config.servicePort);

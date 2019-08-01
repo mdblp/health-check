@@ -3,12 +3,14 @@ let should = chai.should();
 
 describe("Configuration", () => {
     let config;
+    let ylpVersion = "x.y.z";
     before(() => {
         process.env.MONITORED_URLS = JSON.stringify([
             {name: "gatekeeper", url:"http://localhost:9123/status"},
             {name: "hakken", url:"http://localhost:8000/status", "pingTimeout": 3000},
         ]);
         process.env.PING_TIMEOUT = 4000;
+        process.env.YLP_VERSION = ylpVersion;
         config = require("../env.js");
     });
     it("Service urls should be parsed correctly", () => {
@@ -24,5 +26,8 @@ describe("Configuration", () => {
     });
     it("Hakken ping timeout should be set with a custom value", () => {
         config.monitoredServices[1].pingTimeout.should.eql(3000);
+    });
+    it("YourLoops version should be " + ylpVersion, () => {
+        config.ylpVersion.should.eql(ylpVersion);
     });
 });

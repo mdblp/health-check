@@ -1,14 +1,16 @@
 # Health Check
 ## Service description
-Health-Check is a simple service which allows you to monitor several web services and provide an agregated status.  
+Health-Check is a simple service which allows you to monitor several web services and provide an aggregated status.  
 
 ### How it works
-Each time the service is contacted it will ping (http GET) each service endpoints provided in the configuration and build an agregated view. 
+Each time the service is contacted it will ping (http GET) each service endpoints provided in the configuration and build an aggregated view. 
 If all services respond with a status 200 the health check service will return 200 as well. 
 If (at least) one of the monitored services responds with a code different than 2XX or does not respond within the expected delay (timeout) it will return 503.   
-The timeout can be provided globaly and for each service.  
+The timeout can be provided globaly and for each service.
 
-The service exposes this agregated status on route `/status`  
+In addition, the service is displaying the overall status of YourLoops in first position. It includes the global status (either 200 or 503 depending on the other services) and potentially the version number is passed as en environment variable `YLP_VERSION`.
+
+The service exposes this aggregated status on route `/status`  
 This end point is typically what would be provided to a load balancer to check the health of the entire stack.
 
 
@@ -32,6 +34,7 @@ $ npm install
 ## Running locally
 ### Configuration
 To start properly the service expect a few environment variables to be set:
+* YLP_VERSION: the version of YourLoops the health-check is running on
 * MONITORED_URLS: the list of urls to ping to monitor services. These urls must be provided as a JSON array.  
   Exemple: 
   ```
@@ -70,6 +73,12 @@ The service should return either an http status code 200, in case of success, or
 Start by clonning the repo and install the dependencies as explained above. Then you are ready to change the code and test!  
 
 ### Running the tests
+In order to run the unit tests, you need to have `Mocha` JS test framework installed in your environment. Run the following:
+```bash
+$ npm install -g mocha mocha-junit-reporter
+```
+For more information on Mocha, refer to their [website](https://mochajs.org/).
+
 To run the unit tests, use:
 
 ```bash

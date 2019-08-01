@@ -16,14 +16,14 @@ pipeline {
                 stash name: "distrib", includes: "**"
             }
         }
-        stage('Acceptance tests'){
+        stage('Acceptance tests') {
             agent {
                 docker {
                     image 'node:10.13.0-alpine'
                 }
             }
             steps {
-                sh 'npm test'
+                sh 'npm install && npm run jenkins_test'
             }
             post {
                 always {

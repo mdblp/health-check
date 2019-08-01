@@ -8,9 +8,19 @@ var restify = require('restify');
 var request = require('request-promise');
 const bunyan = require("bunyan");
 
+const responseCode = {
+    success: 200,
+    failure: 503
+}
+
+const responseStatus = {
+    success: "OK",
+    failure : "NOK"
+};
+
 class HealthCheckService {
-    constructor(services) {
-        //let's check the list list of services if OK:
+    constructor(services, ylpVersion) {
+        //let's check the list of services is OK:
         if (services && Array.isArray(services)) {
             services.forEach((service) => {
                 if (typeof service.name != 'string' || typeof service.url != 'string') {
@@ -19,6 +29,7 @@ class HealthCheckService {
             });
         }
         this.services = services;
+        this.ylpVersion = ylpVersion;
         //default logger
         this.logger = bunyan.createLogger({
             name: 'health-check-default',
@@ -53,9 +64,9 @@ class HealthCheckService {
             request(options)
                 .then((res) => {
                     if (res.statusCode == 200) {
-                        retVal['status'] = "OK";
+                        retVal['status'] = responseStatus.success;
                     } else {
-                        retVal['status'] = "NOK";
+                        retVal['status'] = responseStatus.failure;
                     }
                     let details = "";
                     try {
@@ -67,7 +78,7 @@ class HealthCheckService {
                     resolve(retVal);
                 })
                 .catch((err) => {
-                    retVal['status'] = "NOK";
+                    retVal['status'] = responseStatus.failure;
                     retVal['error'] = err.message;
                     reject(retVal);
                 });
@@ -83,6 +94,11 @@ class HealthCheckService {
     checkServices(req, res) {
         this.logger.info("Checking services health");
         let globalResult = [];
+        let ylp = { 'service': 'yourloops', 'version': this.ylpVersion };
+        
+        // By default, we consider everything is going fine
+        let resCode = responseCode.success;
+
         let isOK = true;
         let nbOfServices = this.services.length;
         let totalOfCheckedServices = 0;
@@ -97,14 +113,19 @@ class HealthCheckService {
                 if (totalOfCheckedServices == nbOfServices) {
                     if (isOK) {
                         this.logger.info("all services are up and running!");
-                        this.logger.debug(globalResult);
-                        res.status(200);
-                        res.send(globalResult);
                     } else {
                         this.logger.info("at least one service is down");
-                        res.status(503);
-                        res.send(globalResult);
+                        // at least one service down and we return failure
+                        resCode = responseCode.failure;
                     }
+                    // Overall status of YLP depends on all services status
+                    ylp['status'] = (resCode == responseCode.success)? responseStatus.success : responseStatus.failure;
+                    // Push YLP service information on first position
+                    globalResult.unshift(ylp);
+                    this.logger.debug(globalResult);
+                    // Respond
+                    res.status(resCode);
+                    res.send(globalResult);
                 }
             });
         }
@@ -145,3 +166,5 @@ class HealthCheckService {
 }
 
 module.exports = HealthCheckService;
+module.exports.responseStatus = responseStatus;
+module.exports.responseCode = responseCode;

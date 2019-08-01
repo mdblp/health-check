@@ -1,11 +1,12 @@
 {
   "name": "health-checks",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "simple REST service to check the health of all our services and report it back",
   "main": "index.js",
   "scripts": {
     "pretest": "npm install",
-    "test": "mocha --timeout 10000 --recursive --reporter mocha-junit-reporter --reporter-options testCaseSwitchClassnameAndName=true",
+    "test": "mocha --timeout 10000 --recursive",
+    "jenkins_test": "mocha --timeout 10000 --recursive --reporter mocha-junit-reporter --reporter-options testCaseSwitchClassnameAndName=true",
     "start": "node index.js"
   },
   "author": "Platforms@diabeloop.fr",
