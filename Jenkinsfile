@@ -23,7 +23,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'npm run jenkins_test'
+                sh 'npm install && npm run jenkins_test'
             }
             post {
                 always {
