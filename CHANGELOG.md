@@ -4,6 +4,10 @@ Health-Check is a simple service which allows you to monitor several web service
 The service exposes this aggregated status on route /status
 This end point is typically what would be provided to a load balancer to check the health of the entire stack.
 
+## 1.1.1 - 2019-11-26
+### Engineering
+- [PT-819] Apply security patches (upgrade npm packages)
+
 ## 1.1.0 - 2019-07-31
 
 ### Added
