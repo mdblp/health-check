@@ -5,3 +5,4 @@ testCommand: npm test
 docker: true
 publishNpm: false
 publishS3: true
+publishSoup: true
