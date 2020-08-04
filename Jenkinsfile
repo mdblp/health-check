@@ -31,6 +31,12 @@ pipeline {
                 }
             }   
         }
+        stage('Documentation') {
+            steps {
+                unstash "distrib"
+                genDocumentation()
+            }
+        }
         stage('Package') {
             steps {
                 unstash "distrib"
