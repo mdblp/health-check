@@ -4,6 +4,10 @@ Health-Check is a simple service which allows you to monitor several web service
 The service exposes this aggregated status on route /status
 This end point is typically what would be provided to a load balancer to check the health of the entire stack.
 
+## 1.2.2-rdc1 - 2020-08-11
+### Test
+- YLP-127 Test docker push to pictime
+
 ## 1.2.1 - 2020-08-04
 ### Engineering
 - PT-1453 Generate SOUP document
