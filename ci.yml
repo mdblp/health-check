@@ -6,3 +6,4 @@ docker: true
 publishNpm: false
 publishS3: true
 publishSoup: true
+dockerPictime: true
