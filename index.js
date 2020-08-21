@@ -15,7 +15,7 @@ const logStreams = [
   }
 ];
 if(config.logFile) {
-  streams.push({
+  logStreams.push({
     level: config.logLevel,
     path: config.logFile
   });
