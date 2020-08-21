@@ -8,18 +8,22 @@ const packageJson = require("./package.json");
 const config = require("./env.js");
 
 // Create logger used by the service (based on configuration)
+const logStreams = [
+  {
+    level: config.logLevel,
+    stream: process.stdout
+  }
+];
+if(config.logFile) {
+  logStreams.push({
+    level: config.logLevel,
+    path: config.logFile
+  });
+}
+
 const logger = bunyan.createLogger({
   name: config.serviceName,
-  streams: [
-    {
-      level: config.logLevel,
-      stream: process.stdout
-    },
-    {
-      level: config.logLevel,
-      path: config.logFile
-    }
-  ]
+  streams: logStreams
 });
 
 //Currently the list of services is provided by configuration. Ideally this should be obtained from hakken

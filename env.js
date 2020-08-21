@@ -44,7 +44,7 @@ module.exports = (function() {
   
   //Log config
   env.logLevel = process.env.LOG_LEVEL || 'info';
-  env.logFile = process.env.LOG_FILE || './health-check.log'
+  env.logFile = process.env.LOG_FILE
 
   return env;
 })();

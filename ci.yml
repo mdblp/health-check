@@ -3,6 +3,7 @@ type: nodejs
 runTests: false
 testCommand: npm test
 docker: true
+dockerPictime: true
 publishNpm: false
 publishS3: true
 publishSoup: true
