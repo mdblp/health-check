@@ -1,5 +1,5 @@
 #!groovy
-@Library('mdblp-library') _
+@Library('mdblp-library@feature/test_trivy') _
 
 pipeline {
     agent any
