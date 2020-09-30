@@ -11,9 +11,11 @@ pipeline {
                 }
             }
             steps { 
-                sh 'npm install --production && npm run security-checks'
-                sh 'sh ./qa/distrib.sh'
-                stash name: "distrib", includes: "**"
+                withCredentials([string(credentialsId: 'nexus-token', variable: 'NEXUS_TOKEN')]) {
+                    sh 'npm install --production && npm run security-checks'
+                    sh 'sh ./qa/distrib.sh'
+                    stash name: "distrib", includes: "**"
+                }
             }
         }
         stage('Acceptance tests') {
@@ -23,7 +25,9 @@ pipeline {
                 }
             }
             steps {
-                sh 'npm install && npm run jenkins_test'
+                withCredentials([string(credentialsId: 'nexus-token', variable: 'NEXUS_TOKEN')]) {
+                    sh 'npm install && npm run jenkins_test'
+                }
             }
             post {
                 always {
