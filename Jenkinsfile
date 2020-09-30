@@ -11,7 +11,7 @@ pipeline {
                 }
             }
             steps { 
-                sh 'npm install --production'
+                sh 'npm install --production && npm run security-checks'
                 sh 'sh ./qa/distrib.sh'
                 stash name: "distrib", includes: "**"
             }
