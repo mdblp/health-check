@@ -1,12 +1,13 @@
 {
   "name": "health-checks",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "simple REST service to check the health of all our services and report it back",
   "main": "index.js",
   "scripts": {
     "test": "mocha --timeout 10000 --recursive",
     "jenkins_test": "mocha --timeout 10000 --recursive --reporter mocha-junit-reporter --reporter-options testCaseSwitchClassnameAndName=true",
-    "start": "node index.js"
+    "start": "node index.js",
+    "security-checks": "npm audit --production --registry=https://registry.npmjs.org/"
   },
   "author": "platforms@diabeloop.fr",
   "repository": {

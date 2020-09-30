@@ -7,11 +7,11 @@ pipeline {
         stage('Build and package') { 
              agent {
                 docker {
-                    image 'node:10.15-alpine'
+                    image 'node:10-alpine'
                 }
             }
             steps { 
-                sh 'npm install'
+                sh 'npm install --production'
                 sh 'sh ./qa/distrib.sh'
                 stash name: "distrib", includes: "**"
             }
@@ -19,7 +19,7 @@ pipeline {
         stage('Acceptance tests') {
             agent {
                 docker {
-                    image 'node:10.13.0-alpine'
+                    image 'node:10-alpine'
                 }
             }
             steps {
