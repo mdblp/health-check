@@ -1,15 +1,13 @@
-FROM node:10.15-alpine
-
-RUN apk --no-cache update
-RUN apk --no-cache upgrade
-RUN apk add python make
-
+FROM node:10-alpine
+ENV NODE_ENV=production
 WORKDIR /app
 
-COPY . .
+RUN apk --no-cache update && \
+    apk --no-cache upgrade && \
+    npm install -g npm@latest && \
+    chown -R node:node /app 
 
-RUN chown -R node /app
-RUN NODE_ENV=production npm install
+COPY ./dist .
 
 USER node
 

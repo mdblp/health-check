@@ -7,23 +7,27 @@ pipeline {
         stage('Build and package') { 
              agent {
                 docker {
-                    image 'node:10.15-alpine'
+                    image 'node:10-alpine'
                 }
             }
             steps { 
-                sh 'npm install'
-                sh 'sh ./qa/distrib.sh'
-                stash name: "distrib", includes: "**"
+                withCredentials([string(credentialsId: 'nexus-token', variable: 'NEXUS_TOKEN')]) {
+                    sh 'npm install --production && npm run security-checks'
+                    sh 'sh ./qa/distrib.sh'
+                    stash name: "distrib", includes: "**"
+                }
             }
         }
         stage('Acceptance tests') {
             agent {
                 docker {
-                    image 'node:10.13.0-alpine'
+                    image 'node:10-alpine'
                 }
             }
             steps {
-                sh 'npm install && npm run jenkins_test'
+                withCredentials([string(credentialsId: 'nexus-token', variable: 'NEXUS_TOKEN')]) {
+                    sh 'npm install && npm run jenkins_test'
+                }
             }
             post {
                 always {
