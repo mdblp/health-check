@@ -6,5 +6,5 @@ docker: true
 dockerPictime: true
 publishNpm: false
 publishS3: true
-publishSoup: true
+publishSoupBucket: com.diabeloop.backloops.docs
 dockerPushToProduction: true
