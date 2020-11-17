@@ -7,6 +7,7 @@ This end point is typically what would be provided to a load balancer to check t
 ## Unreleased
 ### Engineering
 - Modify pipeline so the publish to Operations docker registry is effective
+- Modify CI parameters to accomodate changes in Jenkins library for publishing SOUP/OPENAPI
 
 ## 1.2.3 - 2020-09-30
 ### Engineering
